@@ -182,9 +182,13 @@ header {
     overflow: hidden;
     transition: all ease 0.5s;
 
-    .__input {
-        text-align: center;
+    &__input {
+        text-align: right;
         text-transform: uppercase;
+        font-size: clamp(2.5rem, calc(2.1479rem + 1.5023vw), 3.5rem);
+        border: 0;
+        background: transparent;
+        color: var(--clr-text);
     }
 }
 

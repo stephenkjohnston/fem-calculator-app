@@ -12,11 +12,19 @@ document.addEventListener("DOMContentLoaded", () => {
         "themeToggleSound"
     ) as HTMLAudioElement;
 
+    const calculatorDisplay = document.querySelector(
+        ".display__input"
+    ) as HTMLInputElement;
+
     // Select all keys
     const calculatorKeys = document.querySelectorAll(".key");
     const calculatorKeyPressedSound = document.getElementById(
         "themeToggleKeySound"
     ) as HTMLAudioElement;
+
+    let currentInput = "";
+    let operator = "";
+    let previousInput;
 
     // Set a default theme if no theme is set in localStorage
     const currentTheme = localStorage.getItem("theme");
@@ -73,11 +81,18 @@ document.addEventListener("DOMContentLoaded", () => {
             calculatorKeyPressedSound.currentTime = 0;
             calculatorKeyPressedSound.volume = 0.25;
             calculatorKeyPressedSound.play();
+            calculatorKey.setAttribute("aria-pressed", "true");
+
+            handleCalculatorInput(
+                currentKey.dataset.value,
+                currentKey.dataset.type
+            );
         });
         // Remove "pressed" class on mouseup
         currentKey.addEventListener("mouseup", (event: MouseEvent) => {
             event.preventDefault();
             currentKey.classList.remove("pressed");
+            calculatorKey.setAttribute("aria-pressed", "false");
         });
 
         // Remove "pressed" class on mouseleave
@@ -85,4 +100,74 @@ document.addEventListener("DOMContentLoaded", () => {
             currentKey.classList.remove("pressed");
         });
     });
+
+    function handleCalculatorInput(value, type) {
+        if (calculatorDisplay) {
+            if (type === "number") {
+                currentInput += value;
+                calculatorDisplay.value = currentInput;
+            }
+
+            if (type === "action") {
+                if (value === "delete") {
+                    currentInput = currentInput.slice(0, -1);
+                    calculatorDisplay.value = currentInput;
+                }
+
+                if (value === "equals") {
+                    if (previousInput && operator && currentInput) {
+                        const result = calculate(
+                            previousInput,
+                            operator,
+                            currentInput
+                        );
+                        console.log({ result });
+                        calculatorDisplay.value = `${result}`;
+                        currentInput = "";
+                        operator = "";
+                        previousInput = result;
+                    }
+                }
+
+                if (value === "reset") {
+                    currentInput = "";
+                    operator = "";
+                    previousInput = "";
+                    calculatorDisplay.value = "";
+                }
+            }
+
+            if (type === "operator") {
+                if (currentInput) {
+                    if (operator) {
+                        previousInput = calculate(
+                            previousInput,
+                            operator,
+                            currentInput
+                        );
+                        calculatorDisplay.textContent = previousInput;
+                    } else {
+                        previousInput = currentInput;
+                    }
+                    operator = value;
+                    currentInput = "";
+                }
+            }
+        }
+    }
+
+    function calculate(a, operator, b) {
+        switch (operator) {
+            case "add":
+                return parseFloat(a) + parseFloat(b);
+            case "subtract":
+                return parseFloat(a) - parseFloat(b);
+            case "multiply":
+                return parseFloat(a) * parseFloat(b);
+            case "divide":
+                return parseFloat(a) / parseFloat(b);
+            default:
+                return b;
+        }
+    }
 });
