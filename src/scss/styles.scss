@@ -1,0 +1,19 @@
+@import "reset";
+@import "theme";
+
+body {
+    min-height: 100vh;
+    display: flex;
+    place-content: center;
+    background-color: var(--clr-background);
+    font-family: var(--ff-primary);
+    font-weight: var(--fw-700);
+    color: var(--clr-text);
+    line-height: 1.5;
+    font-optical-sizing: auto;
+    transition: all ease 0.25s;
+}
+
+#calculator {
+    width: clamp(20rem, calc(15.1585rem + 20.6573vw), 33.75rem);
+}
