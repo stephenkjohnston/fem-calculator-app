@@ -41,23 +41,30 @@ document.addEventListener("DOMContentLoaded", () => {
         if (prefersDarkMode) {
             localStorage.setItem("theme", "dark");
             $htmlElement?.setAttribute("data-theme", "dark");
+            updateThemeSelectionAriaStatuses("dark");
         } else if (prefersLightMode) {
             localStorage.setItem("theme", "light");
             $htmlElement?.setAttribute("data-theme", "light");
+            updateThemeSelectionAriaStatuses("light");
         } else {
             localStorage.setItem("theme", "light");
             $htmlElement?.setAttribute("data-theme", "light");
+            updateThemeSelectionAriaStatuses("light");
         }
     } else {
         // Apply the current theme from localStorage
         $htmlElement?.setAttribute("data-theme", currentTheme);
+        updateThemeSelectionAriaStatuses(currentTheme);
     }
 
     // Add event listeners to theme selection radio buttons
     themeSelections.forEach((themeSelection) => {
         // Add a click event listener
         themeSelection.addEventListener("click", (event) => {
-            const selectedTheme = (event.target as HTMLInputElement).value;
+            const selectedThemeRadioControl = event.target as HTMLInputElement;
+            const selectedTheme = selectedThemeRadioControl.value;
+            updateThemeSelectionAriaStatuses(selectedTheme);
+
             if ($htmlElement) {
                 // Update the data-theme attribute and localStorage with the selected theme
                 $htmlElement.setAttribute("data-theme", selectedTheme);
@@ -169,5 +176,21 @@ document.addEventListener("DOMContentLoaded", () => {
             default:
                 return b;
         }
+    }
+
+    function updateThemeSelectionAriaStatuses(selectedTheme: string) {
+        const themeSelections = document.querySelectorAll(
+            '.theme-toggle input[type="radio"]'
+        ) as NodeListOf<HTMLInputElement>;
+
+        themeSelections.forEach((radio) => {
+            const isChecked = radio.value === selectedTheme;
+            if (!isChecked) {
+                radio.removeAttribute("checked");
+            } else {
+                radio.setAttribute("checked", isChecked.toString());
+            }
+            radio.setAttribute("aria-checked", isChecked.toString());
+        });
     }
 });
