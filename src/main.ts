@@ -188,7 +188,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!isChecked) {
                 radio.removeAttribute("checked");
             } else {
-                radio.setAttribute("checked", isChecked.toString());
+                radio.setAttribute("checked", "");
             }
             radio.setAttribute("aria-checked", isChecked.toString());
         });
